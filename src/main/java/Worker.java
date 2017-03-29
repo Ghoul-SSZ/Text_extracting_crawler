@@ -6,7 +6,20 @@ import java.io.IOException;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-
+/*
+* Modules
+* - Link extraction
+* - Text extraction
+* - Signal to Regulator
+*
+* Arguments
+* - URL (From either Regulator or Main)
+*
+* Outputs
+* - Text Data
+* - Href links to Crawl List (lvl.1)
+* - Idle_signal
+* */
 public class Worker {
 
         public static void main(String[] args) throws IOException {
