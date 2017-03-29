@@ -4,6 +4,7 @@
 /*
 * Purpose:
 * Regulating different workers
+* Put a depth in argument , just for testing
 *
 * Arguments:
 * Idle-signal (From worker)

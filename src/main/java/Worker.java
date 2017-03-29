@@ -18,6 +18,7 @@ import com.google.common.collect.Multimap;
 * Outputs
 * - Text Data
 * - Href links to Crawl List (lvl.1)
+*   - Ignore picture, PDFs, and link outside the forum
 * - Idle_signal
 * */
 public class Worker {
