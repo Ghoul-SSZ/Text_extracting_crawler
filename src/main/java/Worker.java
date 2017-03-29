@@ -20,6 +20,7 @@ import com.google.common.collect.Multimap;
 * - Href links to Crawl List (lvl.1)
 * - Idle_signal
 * */
+
 public class Worker {
 
         public static void main(String[] args) throws IOException {
@@ -89,7 +90,7 @@ public class Worker {
         }
 
         // Word counter
-        public static int countWord(String word) {
+        private static int countWord(String word) {
             if (word == null) {
                 return 0;
             }
