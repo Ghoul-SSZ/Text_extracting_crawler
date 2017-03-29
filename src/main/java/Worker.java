@@ -21,6 +21,7 @@ import com.google.common.collect.Multimap;
 *   - Ignore picture, PDFs, and link outside the forum
 * - Idle_signal
 * */
+
 public class Worker {
 
         public static void main(String[] args) throws IOException {
@@ -90,7 +91,7 @@ public class Worker {
         }
 
         // Word counter
-        public static int countWord(String word) {
+        private static int countWord(String word) {
             if (word == null) {
                 return 0;
             }
