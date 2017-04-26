@@ -21,13 +21,13 @@ public class Main {
     public LinkedList <String> crawler_list_lvl1 = new LinkedList<String>(); //Needs to use Collect.synchronizedlist
     public LinkedList <String> crawler_list_lvl2 = new LinkedList<String>(); // After Filtered by Bloom-filter
     private static ArrayList <String> seed_list = new ArrayList<String>();
-    public static ArrayList<BitSet> MLBF = new ArrayList<BitSet>(); // keeps all BF in a list, layer is defined by the list cell position.
+    private static ArrayList<BitSet> MLBF = new ArrayList<BitSet>(); // keeps all BF in a list, layer is defined by the list cell position.
 
 
     //parameter section
-    public static int L = 5;
-    public static int K = 20;
-    public static int num_of_workers = 5;
+    private static int L = 5;
+    private static int K = 20;
+    private static int num_of_workers = 5;
     //end of parameter section
 
     public static void main (String[] args) {
@@ -122,18 +122,18 @@ public class Main {
         return true;
     }
 
-    public static String [] link_to_layers (String link){
+    private static String [] link_to_layers (String link){
         link = link.replaceAll("http://","");
         link = link.replaceAll("https://","");
-        String [] link_layers = link.split("/");
-        return link_layers;
+        return link.split("/");
     }
 
 
     // h(x)= (ax+b)%c
-    static long sPrime = 4294967311L;  //Slightly larger prime than max 32bit number -> C
-    static int max = 2147483647;
-    public static ArrayList<Integer> genRCoff (int n) {
+    private static long sPrime = 4294967311L;  //Slightly larger prime than max 32bit number -> C
+
+    private static ArrayList<Integer> genRCoff (int n) {
+        int max = 2147483647;
         ArrayList <Integer> coff = new ArrayList<Integer>();
         while (n>0) {
             Random r = new Random();
