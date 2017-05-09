@@ -18,8 +18,8 @@ import java.util.Random;
 *Crawl List (lvl.2)
 **/
 public class Main {
-    public LinkedList <String> crawler_list_lvl1 = new LinkedList<String>(); //Needs to use Collect.synchronizedlist
-    public LinkedList <String> crawler_list_lvl2 = new LinkedList<String>(); // After Filtered by Bloom-filter
+    public static LinkedList <String> crawler_list_lvl1 = new LinkedList<String>(); //Needs to use Collect.synchronizedlist
+    public static LinkedList <String> crawler_list_lvl2 = new LinkedList<String>(); // After Filtered by Bloom-filter
     private static ArrayList <String> seed_list = new ArrayList<String>();
     private static ArrayList<BitSet> MLBF = new ArrayList<BitSet>(); // keeps all BF in a list, layer is defined by the list cell position.
 
@@ -43,11 +43,29 @@ public class Main {
             MLBF.add(BFs);
         }
 
-        String [] test = link_to_layers("https://www.123.com/abc/kk/22");
-        for (String s:test) {System.out.println(s);}
-
         ArrayList <Integer> coffA = genRCoff(K);
         ArrayList <Integer> coffB = genRCoff(K);
+
+        //Fix Regulator here
+
+        for (String csvlink:seed_list) {
+            // Pass link to Regulator
+
+            while (true){ //fix done signal from regulator
+
+                //MLBF section
+                while (!crawler_list_lvl1.isEmpty()){
+                    if (bloom_filter_query(crawler_list_lvl1.getFirst(),coffA,coffB)){
+                        crawler_list_lvl1.removeFirst();
+                    }else{
+                        bloom_filter_insert(crawler_list_lvl1.getFirst(),coffA,coffB);
+                        crawler_list_lvl2.add(crawler_list_lvl1.getFirst());
+                        crawler_list_lvl1.removeFirst();
+                    }
+                }
+
+            }
+        }
 
 
     }
@@ -70,7 +88,6 @@ public class Main {
             while((line = br.readLine()) != null){
                 seed_list.add(line);
             }
-            System.out.println(seed_list);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
