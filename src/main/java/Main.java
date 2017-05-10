@@ -21,7 +21,7 @@ public class Main {
     public LinkedList <String> crawler_list_lvl1 = new LinkedList<String>(); //Needs to use Collect.synchronizedlist
     public LinkedList <String> crawler_list_lvl2 = new LinkedList<String>(); // After Filtered by Bloom-filter
     private static ArrayList <String> seed_list = new ArrayList<String>();
-    private static ArrayList<BitSet> MLBF = new ArrayList<BitSet>(); // keeps all BF in a list, layer is defined by the list cell position.
+    public static ArrayList<BitSet> MLBF = new ArrayList<BitSet>(); // keeps all BF in a list, layer is defined by the list cell position.
 
 
     //parameter section
@@ -34,7 +34,9 @@ public class Main {
         System.out.println("Hello Idiots");
         read_seed_list();
 
-        create_workers(num_of_workers);
+        ArrayList <Integer> coffA = genRCoff(K);
+        ArrayList <Integer> coffB = genRCoff(K);
+        create_workers(num_of_workers,coffA,coffB,L,K);
 
         //Bit arrays for Bloom Filter
         //n = 1,000,000, p = 1.0E-6 (1 in 1,000,000) → m = 28,755,176 (3.43MB), k = 20
@@ -43,18 +45,11 @@ public class Main {
             MLBF.add(BFs);
         }
 
-        String [] test = link_to_layers("https://www.123.com/abc/kk/22");
-        for (String s:test) {System.out.println(s);}
-
-        ArrayList <Integer> coffA = genRCoff(K);
-        ArrayList <Integer> coffB = genRCoff(K);
-
-
     }
 
-    private static void create_workers(int num_of_workers){
+    private static void create_workers(int num_of_workers, ArrayList coffA, ArrayList coffB, int L, int K){
         for (int i = 0; i <= num_of_workers; i++){
-            Thread t = new Thread(new Worker());  // needs to fix worker class, also naming the worker thread?
+            Thread t = new Thread(new Worker(MLBF,coffA,coffB,L,K));  // needs to fix worker class, also naming the worker thread?
             t.start();
         }
 
@@ -79,58 +74,9 @@ public class Main {
         }
     }
 
-    private static void bloom_filter_insert(String link, ArrayList<Integer> coffA, ArrayList<Integer> coffB){
-        String[] a = link_to_layers(link);  //needs to be smaller than L
-        long Address;
-        int[] LAddr = new int[K];
-        for (int c=0; c<L; c++){
-            for (int j=0; j<K;j++){
-                // hash and flip the bit
-                // h(x)= (ax+b)%c
-                Address = (coffA.get(j)*a[c].hashCode()+coffB.get(j))%sPrime;
-                MLBF.get(c).set((int) Address);
-
-                //LAddr[j] = LAddr[j] xor Addr
-                LAddr[j] = LAddr[j] ^ (int) Address;
-
-            }
-        }
-        for (int j=0 ;j<K; j++){
-            MLBF.get(L).set(LAddr[j]);
-        }
-    }
-
-    private static boolean bloom_filter_query(String link, ArrayList<Integer> coffA, ArrayList<Integer> coffB){
-        String[] a = link_to_layers(link);
-        long Address;
-        int[] LAddr = new int[K];
-        for (int i=0; i<L; i++){
-            for (int j=0; j<K; j++){
-                Address = (coffA.get(j)*a[i].hashCode()+coffB.get(j))%sPrime;
-                if (!MLBF.get(i).get((int) Address)){return false;}
-                //LAddr[j] = LAddr[j] xor Addr
-                LAddr[j] = LAddr[j] ^ (int) Address;
-            }
-        }
-
-        for (int j=0; j<K; j++){
-            if (!MLBF.get(L).get(LAddr[j])){
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private static String [] link_to_layers (String link){
-        link = link.replaceAll("http://","");
-        link = link.replaceAll("https://","");
-        return link.split("/");
-    }
 
 
-    // h(x)= (ax+b)%c
-    private static long sPrime = 4294967311L;  //Slightly larger prime than max 32bit number -> C
+
 
     private static ArrayList<Integer> genRCoff (int n) {
         int max = 2147483647;
