@@ -33,13 +33,11 @@ import com.google.common.collect.Multimap;
 //testing
 
 public class Worker implements Runnable { //(added implements runnable)
-    public static ArrayList<BitSet> MLBF ;
     ArrayList <Integer> coffA;
     ArrayList <Integer> coffB;
     static int L;
     static int K;
-    public Worker(ArrayList<BitSet> MLBF, ArrayList<Integer> CoffA, ArrayList<Integer> CoffB, int L, int K){
-            this.MLBF =MLBF;
+    public Worker( ArrayList<Integer> CoffA, ArrayList<Integer> CoffB, int L, int K){
             this.coffA=CoffA;
             this.coffB=CoffB;
             this.L = L;
@@ -124,6 +122,19 @@ public class Worker implements Runnable { //(added implements runnable)
                 long elapsedTime=stopTime-startTime;
                 System.out.println("Time in milliseconds is: "+elapsedTime);
                 System.out.println("Number of lines above the average: "+numOfLines);
+
+                // get arraylist of links
+
+                // Put links to MLBF
+
+                        //use. BloomFilter.MLBF_insert
+
+                // result: filterad list
+                // send to main. (Bag of tasks)
+
+
+                        //for loop for links
+                            //Main.bag_of_taks.add();
             }catch (IOException err){err.printStackTrace();}
 
         }
@@ -140,58 +151,8 @@ public class Worker implements Runnable { //(added implements runnable)
             return count;
         }
 
-        private static String [] link_to_layers (String link){
-            link = link.replaceAll("http://","");
-            link = link.replaceAll("https://","");
-            return link.split("/");
-        }
 
 
-        // h(x)= (ax+b)%c
-        private static long sPrime = 4294967311L;  //Slightly larger prime than max 32bit number -> C
-
-        private static void bloom_filter_insert(String link, ArrayList<Integer> coffA, ArrayList<Integer> coffB){
-            String[] a = link_to_layers(link);  //needs to be smaller than L
-            long Address;
-            int[] LAddr = new int[K];
-            for (int c=0; c<L; c++){
-                for (int j=0; j<K;j++){
-                    // hash and flip the bit
-                    // h(x)= (ax+b)%c
-                    Address = (coffA.get(j)*a[c].hashCode()+coffB.get(j))%sPrime;
-                    MLBF.get(c).set((int) Address);
-
-                    //LAddr[j] = LAddr[j] xor Addr
-                    LAddr[j] = LAddr[j] ^ (int) Address;
-
-                }
-            }
-            for (int j=0 ;j<K; j++){
-                MLBF.get(L).set(LAddr[j]);
-            }
-        }
-
-        private static boolean bloom_filter_query(String link, ArrayList<Integer> coffA, ArrayList<Integer> coffB){
-            String[] a = link_to_layers(link);
-            long Address;
-            int[] LAddr = new int[K];
-            for (int i=0; i<L; i++){
-                for (int j=0; j<K; j++){
-                    Address = (coffA.get(j)*a[i].hashCode()+coffB.get(j))%sPrime;
-                    if (!MLBF.get(i).get((int) Address)){return false;}
-                    //LAddr[j] = LAddr[j] xor Addr
-                    LAddr[j] = LAddr[j] ^ (int) Address;
-                }
-            }
-
-            for (int j=0; j<K; j++){
-                if (!MLBF.get(L).get(LAddr[j])){
-                    return false;
-                }
-            }
-
-            return true;
-        }
 
 
 

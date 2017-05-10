@@ -1,3 +1,5 @@
+import javafx.scene.effect.Bloom;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -6,6 +8,7 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created by szhou on 3/29/17.
@@ -19,9 +22,9 @@ import java.util.Random;
 **/
 public class Main {
     public LinkedList <String> crawler_list_lvl1 = new LinkedList<String>(); //Needs to use Collect.synchronizedlist
-    public LinkedList <String> crawler_list_lvl2 = new LinkedList<String>(); // After Filtered by Bloom-filter
+    public LinkedList <String> crawler_list_lvl2 = new LinkedList<String>(); // After Filtered by Bloom-filt
+    public static ConcurrentLinkedQueue <String> bag_of_taks = new ConcurrentLinkedQueue<String>();
     private static ArrayList <String> seed_list = new ArrayList<String>();
-    public static ArrayList<BitSet> MLBF = new ArrayList<BitSet>(); // keeps all BF in a list, layer is defined by the list cell position.
 
 
     //parameter section
@@ -42,14 +45,14 @@ public class Main {
         //n = 1,000,000, p = 1.0E-6 (1 in 1,000,000) → m = 28,755,176 (3.43MB), k = 20
         for(int i = 0; i<=L; i++){
             BitSet BFs = new BitSet(28755176);
-            MLBF.add(BFs);
+            BloomFilter.MLBF.add(BFs);
         }
 
     }
 
     private static void create_workers(int num_of_workers, ArrayList coffA, ArrayList coffB, int L, int K){
         for (int i = 0; i <= num_of_workers; i++){
-            Thread t = new Thread(new Worker(MLBF,coffA,coffB,L,K));  // needs to fix worker class, also naming the worker thread?
+            Thread t = new Thread(new Worker(coffA,coffB,L,K));  // needs to fix worker class, also naming the worker thread?
             t.start();
         }
 
