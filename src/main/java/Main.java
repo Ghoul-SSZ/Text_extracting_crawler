@@ -27,7 +27,7 @@ public class Main {
     //parameter section
     private static int L = 5;
     private static int K = 20;
-    private static int num_of_workers = 5;
+    private static int num_of_workers = 1;
     //end of parameter section
 
     public static void main (String[] args) {

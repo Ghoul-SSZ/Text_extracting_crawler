@@ -2,7 +2,13 @@
  * Created by szhou on 3/29/17.
  */
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.FileWriter;
+import java.util.Collection;
+import java.util.List;
+
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
@@ -81,12 +87,25 @@ public class Worker implements Runnable { //(added implements runnable)
                 int numOfLines=0;
                 for(int getWords=averageWords;getWords<=maxWordCount;getWords++){
                     if(!wordCountedLines.get(getWords).isEmpty()){
-                        System.out.println(wordCountedLines.get(getWords));
+                        //System.out.println(wordCountedLines.get(getWords));
                         numOfLines++;
                     }
                 }
 
-                // Print the elapsed time for the program to run
+                FileWriter fw = new FileWriter("out.txt");
+
+                for(int getWords=averageWords;getWords<=maxWordCount;getWords++) {
+                    Collection<String> myCollection = wordCountedLines.get(getWords);
+                    if (!wordCountedLines.get(getWords).isEmpty()) {
+                        if(myCollection.iterator().hasNext()) {
+                            fw.write(myCollection.toString());
+                            fw.write("\n");
+                        }
+                    }
+                }
+                fw.close();
+
+            // Print the elapsed time for the program to run
                 long stopTime=System.currentTimeMillis();
                 long elapsedTime=stopTime-startTime;
                 System.out.println("Time in milliseconds is: "+elapsedTime);
