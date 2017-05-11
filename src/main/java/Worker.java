@@ -37,14 +37,13 @@ public class Worker implements Runnable { //(added implements runnable)
     ArrayList <Integer> coffB;
     static int L;
     static int K;
-    public Worker( ArrayList<Integer> CoffA, ArrayList<Integer> CoffB, int L, int K){
+    public Worker( ArrayList<Integer> CoffA, ArrayList<Integer> CoffB){
             this.coffA=CoffA;
             this.coffB=CoffB;
-            this.L = L;
-            this.K = K;
     }
 
         public void run(){
+        String link = Main.bag_of_taks.poll();
 
         // Declaration of variables
         long startTime=System.currentTimeMillis();
@@ -55,7 +54,8 @@ public class Worker implements Runnable { //(added implements runnable)
 
         // Get the url and parse it into a jsoup document
             try{
-                org.jsoup.nodes.Document doc=org.jsoup.Jsoup.connect("https://www.elitetrader.com/et/threads/tesla-to-raise-1-15-billion-ahead-of-its-model-3-launch.307736/").get();
+                org.jsoup.nodes.Document doc=org.jsoup.Jsoup.connect(link).get();
+                //org.jsoup.nodes.Document doc = org.jsoup.Jsoup.connect("http://www.financialforum.se/").get();
                 //org.jsoup.nodes.Document doc = org.jsoup.Jsoup.connect("http://www.money-talk.org/thread29673.html&sid=7e96861e745de2f19a2a23947695ea27").get();
                 //org.jsoup.nodes.Document doc = org.jsoup.Jsoup.connect("http://www.marketthoughts.com/forum/best-buy-bby-t2357.html").get();
                 //org.jsoup.nodes.Document doc = org.jsoup.Jsoup.connect("https://www.wallstreetoasis.com/forums/anatomy-of-the-10-k").get();

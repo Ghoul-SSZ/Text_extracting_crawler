@@ -9,6 +9,9 @@ import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by szhou on 3/29/17.
@@ -30,7 +33,7 @@ public class Main {
     //parameter section
     private static int L = 5;
     private static int K = 20;
-    private static int num_of_workers = 1;
+    private static int num_of_workers = 5;
     //end of parameter section
 
     public static void main (String[] args) {
@@ -39,8 +42,6 @@ public class Main {
 
         ArrayList <Integer> coffA = genRCoff(K);
         ArrayList <Integer> coffB = genRCoff(K);
-        create_workers(num_of_workers,coffA,coffB,L,K);
-
         //Bit arrays for Bloom Filter
         //n = 1,000,000, p = 1.0E-6 (1 in 1,000,000) → m = 28,755,176 (3.43MB), k = 20
         for(int i = 0; i<=L; i++){
@@ -48,15 +49,24 @@ public class Main {
             BloomFilter.MLBF.add(BFs);
         }
 
-    }
+        for (String link: seed_list) {
+            bag_of_taks.add(link);
+        }
+        //create_workers(num_of_workers,coffA,coffB);
+        ExecutorService regulator = Executors.newFixedThreadPool(num_of_workers);
 
-    private static void create_workers(int num_of_workers, ArrayList coffA, ArrayList coffB, int L, int K){
-        for (int i = 0; i <= num_of_workers; i++){
-            Thread t = new Thread(new Worker(coffA,coffB,L,K));  // needs to fix worker class, also naming the worker thread?
-            t.start();
+        for(int i=0; i<num_of_workers;i++){
+            regulator.execute(new Worker(coffA,coffB));
         }
 
     }
+
+   // private static void create_workers(int num_of_workers, ArrayList coffA, ArrayList coffB){
+   //     for (int i = 0; i <= num_of_workers; i++){
+   //         Thread t = new Thread(new Worker(coffA,coffB));  // needs to fix worker class, also naming the worker thread?
+   //     }
+
+   //    }
 
     //Convert the text file into an Arraylist for further processing
     private static void read_seed_list(){
