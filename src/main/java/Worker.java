@@ -2,17 +2,21 @@
  * Created by szhou on 3/29/17.
  */
 
-import java.io.File;
-import java.io.FileOutputStream;
+
 import java.io.IOException;
 import java.io.FileWriter;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.Collection;
-import java.util.List;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import org.jsoup.select.Elements;
 
 /*
 * Modules
@@ -51,15 +55,29 @@ public class Worker implements Runnable { //(added implements runnable)
         int totalWordCount=0;
         int wordCount;
         int maxWordCount=0;
+        ArrayList<String> domainLinks = new ArrayList<String>();
 
         // Get the url and parse it into a jsoup document
             try{
-                org.jsoup.nodes.Document doc=org.jsoup.Jsoup.connect(link).get();
-                //org.jsoup.nodes.Document doc = org.jsoup.Jsoup.connect("http://www.financialforum.se/").get();
-                //org.jsoup.nodes.Document doc = org.jsoup.Jsoup.connect("http://www.money-talk.org/thread29673.html&sid=7e96861e745de2f19a2a23947695ea27").get();
-                //org.jsoup.nodes.Document doc = org.jsoup.Jsoup.connect("http://www.marketthoughts.com/forum/best-buy-bby-t2357.html").get();
-                //org.jsoup.nodes.Document doc = org.jsoup.Jsoup.connect("https://www.wallstreetoasis.com/forums/anatomy-of-the-10-k").get();
+                URL aURL = new URL(link);
+                Document doc = Jsoup.connect(link).get();
+                String domain = aURL.getHost();
+                //System.out.println("This is my forum domain " + domain);
 
+                Elements links = doc.select("a");
+                for (Element xlink : links) {
+                    String absHref = xlink.attr("abs:href");
+                    //System.out.println(absHref);
+                    if(absHref!="")
+                    {
+                        URL nURL = new URL(absHref);
+                        String newLink = nURL.getHost();
+                        //System.out.println("New link domain " + newLink);
+                        if(newLink.equals(domain)) {
+                            domainLinks.add(newLink);
+                        }
+                    }
+                }
 
                 // Remove all tags with script, style and hidden
                 doc.select("div.signature, noscript, script, style, .hidden").remove();
