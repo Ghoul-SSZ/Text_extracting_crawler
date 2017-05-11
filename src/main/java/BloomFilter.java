@@ -14,7 +14,7 @@ public class BloomFilter {
 
     public static synchronized ArrayList<BitSet> getMLBF(){return MLBF;}
 
-    private static synchronized void bloom_filter_insert(String link, ArrayList<Integer> coffA, ArrayList<Integer> coffB){
+    public static synchronized void bloom_filter_insert(String link, ArrayList<Integer> coffA, ArrayList<Integer> coffB){
         String[] a = link_to_layers(link);  //needs to be smaller than L
         long Address;
         int[] LAddr = new int[K];
@@ -35,7 +35,7 @@ public class BloomFilter {
         }
     }
 
-    private static boolean bloom_filter_query(String link, ArrayList<Integer> coffA, ArrayList<Integer> coffB){
+    public static boolean bloom_filter_query(String link, ArrayList<Integer> coffA, ArrayList<Integer> coffB){
         String[] a = link_to_layers(link);
         long Address;
         int[] LAddr = new int[K];

@@ -145,14 +145,17 @@ public class Worker implements Runnable { //(added implements runnable)
 
                 // Put links to MLBF
 
-                        //use. BloomFilter.MLBF_insert
-
                 // result: filterad list
                 // send to main. (Bag of tasks)
 
+                for (String dlink:domainLinks) {
+                    if (!BloomFilter.bloom_filter_query(dlink,coffA,coffB)){
+                        BloomFilter.bloom_filter_insert(dlink,coffA,coffB);
+                        Main.bag_of_taks.add(dlink);
+                    }
+                }
 
-                        //for loop for links
-                            //Main.bag_of_taks.add();
+
             }catch (IOException err){err.printStackTrace();}
 
         }
