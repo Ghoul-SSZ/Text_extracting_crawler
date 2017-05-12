@@ -30,9 +30,11 @@ public class Main {
 
 
     //parameter section
-    private static int L = 5;
+    private static int L = 6;
     private static int K = 20;
     private static int num_of_workers = 5;
+    static int pageCount = 0;
+
     //end of parameter section
 
     public static void main (String[] args) {
@@ -55,7 +57,8 @@ public class Main {
         ExecutorService regulator = Executors.newFixedThreadPool(num_of_workers);
 
         for(int i=0; i<num_of_workers;i++){
-            regulator.execute(new Worker(coffA,coffB));
+            pageCount++;
+            regulator.execute(new Worker(coffA,coffB, pageCount));
         }
 
     }
@@ -85,10 +88,6 @@ public class Main {
             e.printStackTrace();
         }
     }
-
-
-
-
 
     private static ArrayList<Integer> genRCoff (int n) {
         int max = 2147483647;

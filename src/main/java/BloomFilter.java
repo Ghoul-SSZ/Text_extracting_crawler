@@ -9,7 +9,7 @@ public class BloomFilter {
 
     // h(x)= (ax+b)%c
     private static long sPrime = 4294967311L;  //Slightly larger prime than max 32bit number -> C
-    static int L = 5;
+    static int L = 6;
     static int K = 20;
 
     public static synchronized ArrayList<BitSet> getMLBF(){return MLBF;}

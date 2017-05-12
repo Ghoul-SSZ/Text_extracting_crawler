@@ -32,6 +32,18 @@ import org.jsoup.select.Elements;
 * - Href links to Crawl List (lvl.1)
 *   - Ignore picture, PDFs, and link outside the forum
 * - Idle_signal
+*
+*
+*
+* https://www.elitetrader.com/et/threads/tesla-to-raise-1-15-billion-ahead-of-its-model-3-launch.307736
+http://www.money-talk.org/thread29673.html&sid=7e96861e745de2f19a2a23947695ea27
+http://www.marketthoughts.com/forum/best-buy-bby-t2357.html
+https://www.wallstreetoasis.com/forums/anatomy-of-the-10-k
+*
+*
+*
+*
+*
 * */
 
 //testing
@@ -39,11 +51,11 @@ import org.jsoup.select.Elements;
 public class Worker implements Runnable { //(added implements runnable)
     ArrayList <Integer> coffA;
     ArrayList <Integer> coffB;
-    static int L;
-    static int K;
-    public Worker( ArrayList<Integer> CoffA, ArrayList<Integer> CoffB){
+    int pageCount;
+    public Worker( ArrayList<Integer> CoffA, ArrayList<Integer> CoffB, int pageCount){
             this.coffA=CoffA;
             this.coffB=CoffB;
+            this.pageCount=pageCount;
     }
 
         public void run(){
@@ -122,8 +134,9 @@ public class Worker implements Runnable { //(added implements runnable)
                     }
                 }
 
-                FileWriter fw = new FileWriter("out.txt");
+                //System.out.println("This is the link I am visiting right now "+link);
 
+                FileWriter fw = new FileWriter(pageCount + ".txt");
                 for(int getWords=averageWords;getWords<=maxWordCount;getWords++) {
                     Collection<String> myCollection = wordCountedLines.get(getWords);
                     if (!wordCountedLines.get(getWords).isEmpty()) {
@@ -142,12 +155,9 @@ public class Worker implements Runnable { //(added implements runnable)
                 System.out.println("Number of lines above the average: "+numOfLines);
 
                 // get arraylist of links
-
                 // Put links to MLBF
-
                 // result: filterad list
                 // send to main. (Bag of tasks)
-
                 for (String dlink:domainLinks) {
                     if (!BloomFilter.bloom_filter_query(dlink,coffA,coffB)){
                         BloomFilter.bloom_filter_insert(dlink,coffA,coffB);
@@ -155,9 +165,7 @@ public class Worker implements Runnable { //(added implements runnable)
                     }
                 }
 
-
             }catch (IOException err){err.printStackTrace();}
-
         }
 
         // Word counter
@@ -171,11 +179,6 @@ public class Worker implements Runnable { //(added implements runnable)
             else count = input.split("\\s+").length;
             return count;
         }
-
-
-
-
-
 
 }
 
