@@ -71,6 +71,7 @@ public class Worker implements Runnable { //(added implements runnable)
 
         // Get the url and parse it into a jsoup document
             try{
+                System.out.println("this is my link"+ link);
                 URL aURL = new URL(link);
                 Document doc = Jsoup.connect(link).get();
                 String domain = aURL.getHost();

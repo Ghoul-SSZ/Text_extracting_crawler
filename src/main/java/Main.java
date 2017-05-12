@@ -30,7 +30,7 @@ public class Main {
 
 
     //parameter section
-    private static int L = 6;
+    private static int L = 15;
     private static int K = 20;
     private static int num_of_workers = 5;
     static int pageCount = 0;
@@ -56,10 +56,12 @@ public class Main {
         //create_workers(num_of_workers,coffA,coffB);
         ExecutorService regulator = Executors.newFixedThreadPool(num_of_workers);
 
-        for(int i=0; i<num_of_workers;i++){
+        while(!bag_of_taks.isEmpty()){
             pageCount++;
             regulator.execute(new Worker(coffA,coffB, pageCount));
         }
+
+
 
     }
 
@@ -95,7 +97,7 @@ public class Main {
         while (n>0) {
             Random r = new Random();
             int a = r.nextInt(max);
-            while (coff.contains(a)) {
+            while (coff.contains(a) || a<0) {
                 a = r.nextInt(max);
             }
 
