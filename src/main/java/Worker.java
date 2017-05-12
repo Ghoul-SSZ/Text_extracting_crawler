@@ -141,7 +141,7 @@ public class Worker implements Runnable { //(added implements runnable)
                 text = link.replaceAll("http://","");
                 text = text.replaceAll("/","-");
                 String ftext= text + ".txt";
-                FileWriter fw = new FileWriter(ftext);
+                FileWriter fw = new FileWriter(new File("collected_data", ftext));
                 for(int getWords=averageWords;getWords<=maxWordCount;getWords++) {
                     Collection<String> myCollection = wordCountedLines.get(getWords);
                     if (!wordCountedLines.get(getWords).isEmpty()) {
