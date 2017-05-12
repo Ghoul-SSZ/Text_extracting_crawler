@@ -3,6 +3,7 @@
  */
 
 
+import java.io.File;
 import java.io.IOException;
 import java.io.FileWriter;
 import java.net.URL;
@@ -52,10 +53,10 @@ public class Worker implements Runnable { //(added implements runnable)
     ArrayList <Integer> coffA;
     ArrayList <Integer> coffB;
     int pageCount;
-    public Worker( ArrayList<Integer> CoffA, ArrayList<Integer> CoffB, int pageCount){
+    public Worker( ArrayList<Integer> CoffA, ArrayList<Integer> CoffB){
             this.coffA=CoffA;
             this.coffB=CoffB;
-            this.pageCount=pageCount;
+            //this.pageCount=pageCount;
     }
 
         public void run(){
@@ -72,7 +73,7 @@ public class Worker implements Runnable { //(added implements runnable)
         // Get the url and parse it into a jsoup document
             try{
                 System.out.println("this is my link"+ link);
-                URL aURL = new URL(link);
+                URL aURL = new URL(link.toString());
                 Document doc = Jsoup.connect(link).get();
                 String domain = aURL.getHost();
                 //System.out.println("This is my forum domain " + domain);
@@ -81,13 +82,13 @@ public class Worker implements Runnable { //(added implements runnable)
                 for (Element xlink : links) {
                     String absHref = xlink.attr("abs:href");
                     //System.out.println(absHref);
-                    if(absHref!="")
+                    if(!absHref.equals(""))
                     {
-                        URL nURL = new URL(absHref);
+                        URL nURL = new URL(absHref.toString());
                         String newLink = nURL.getHost();
                         //System.out.println("New link domain " + newLink);
                         if(newLink.equals(domain)) {
-                            domainLinks.add(newLink);
+                            domainLinks.add(absHref);
                         }
                     }
                 }
@@ -136,8 +137,11 @@ public class Worker implements Runnable { //(added implements runnable)
                 }
 
                 //System.out.println("This is the link I am visiting right now "+link);
-
-                FileWriter fw = new FileWriter(pageCount + ".txt");
+                String text = link.replaceAll("https://","");
+                text = link.replaceAll("http://","");
+                text = text.replaceAll("/","-");
+                String ftext= text + ".txt";
+                FileWriter fw = new FileWriter(ftext);
                 for(int getWords=averageWords;getWords<=maxWordCount;getWords++) {
                     Collection<String> myCollection = wordCountedLines.get(getWords);
                     if (!wordCountedLines.get(getWords).isEmpty()) {
@@ -160,9 +164,12 @@ public class Worker implements Runnable { //(added implements runnable)
                 // result: filterad list
                 // send to main. (Bag of tasks)
                 for (String dlink:domainLinks) {
+                    if(!dlink.equals("")){
                     if (!BloomFilter.bloom_filter_query(dlink,coffA,coffB)){
                         BloomFilter.bloom_filter_insert(dlink,coffA,coffB);
+                        System.out.println("new links:"+dlink);
                         Main.bag_of_taks.add(dlink);
+                    }
                     }
                 }
 

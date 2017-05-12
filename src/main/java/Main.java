@@ -32,8 +32,8 @@ public class Main {
     //parameter section
     private static int L = 15;
     private static int K = 20;
-    private static int num_of_workers = 5;
-    static int pageCount = 0;
+    private static int num_of_workers = 4;
+    //static int pageCount = 0;
 
     //end of parameter section
 
@@ -57,8 +57,8 @@ public class Main {
         ExecutorService regulator = Executors.newFixedThreadPool(num_of_workers);
 
         while(!bag_of_taks.isEmpty()){
-            pageCount++;
-            regulator.execute(new Worker(coffA,coffB, pageCount));
+            //pageCount++;
+            regulator.execute(new Worker(coffA,coffB));
         }
 
 
