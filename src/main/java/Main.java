@@ -60,6 +60,7 @@ public class Main {
             //pageCount++;
             regulator.execute(new Worker(coffA,coffB));
         }
+        if(bag_of_taks.isEmpty()){System.out.print("You are out of work to do!!");}
 
 
 
