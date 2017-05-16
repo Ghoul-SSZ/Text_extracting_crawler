@@ -95,9 +95,11 @@ public class Worker implements Runnable { //(added implements runnable)
                     }
                 }
 
-                // Remove all tags with script, style and hidden
-                doc.select("div.signature, noscript, script, style, .hidden").remove();
-                //doc.select("div.signature").remove();
+                /* In the preprocessing stage, the header parts (<head> ...</head>) are removed,
+                as well as the content of all <style> and <script> tags. PHP and JAVA source code are also removed
+                because they are not text content.*/
+                doc.select("div.signature, head, noscript, script, style, .hidden, php").remove();
+
 
                 // Create a multimap to store the cleaned lines later with the word count as key and a list of the lines as value
                 Multimap<Integer, String> wordCountedLines=HashMultimap.create();
@@ -140,7 +142,7 @@ public class Worker implements Runnable { //(added implements runnable)
 
                 //System.out.println("This is the link I am visiting right now "+link);
                 String text = link.replaceAll("https://","");
-                text = link.replaceAll("http://","");
+                text = text.replaceAll("http://","");
                 text = text.replaceAll("/","*");
                 String ftext= text + ".txt";
                 FileWriter fw = new FileWriter(new File("collected_data", ftext));
