@@ -31,14 +31,6 @@ public class Main {
     private static ArrayList <String> seed_list = new ArrayList<String>();
     private static ArrayList<BitSet> MLBF = new ArrayList<BitSet>(); // keeps all BF in a list, layer is defined by the list cell position.
 
-
-    //parameter section
-    private static int L = 5;
-    private static int K = 20;
-    private static int num_of_workers = 5;
-    //end of parameter section
-
-
     //parameter section
     private static int L = 15;
     private static int K = 20;
@@ -56,7 +48,6 @@ public class Main {
 
         ArrayList <Integer> coffA = genRCoff(K);
         ArrayList <Integer> coffB = genRCoff(K);
-        create_workers(num_of_workers);
 
         //Bit arrays for Bloom Filter
         //n = 1,000,000, p = 1.0E-6 (1 in 1,000,000) → m = 28,755,176 (3.43MB), k = 20

@@ -189,12 +189,7 @@ public class Worker implements Runnable { //(added implements runnable)
             else count = input.split("\\s+").length;
             return count;
         }
-        String input = word.trim();
-        int count;
-        if (input.length()==0) count = 0;
-        else count = input.split("\\s+").length;
-        return count;
-    }
+
 
 }
 
