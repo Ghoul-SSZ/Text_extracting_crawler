@@ -140,7 +140,7 @@ public class Worker implements Runnable { //(added implements runnable)
                 //System.out.println("This is the link I am visiting right now "+link);
                 String text = link.replaceAll("https://","");
                 text = link.replaceAll("http://","");
-                text = text.replaceAll("/","-");
+                text = text.replaceAll("/","*");
                 String ftext= text + ".txt";
                 FileWriter fw = new FileWriter(new File("collected_data", ftext));
                 for(int getWords=averageWords;getWords<=maxWordCount;getWords++) {
@@ -169,7 +169,7 @@ public class Worker implements Runnable { //(added implements runnable)
                     if (!BloomFilter.bloom_filter_query(dlink,coffA,coffB)){
                         BloomFilter.bloom_filter_insert(dlink,coffA,coffB);
                         System.out.println("new links:"+dlink);
-                        Main.bag_of_taks.add(dlink);
+                        Main.bag_of_tasks.add(dlink);
                     }
                     }
                 }

@@ -27,7 +27,7 @@ public class Main {
 
     public LinkedList <String> crawler_list_lvl1 = new LinkedList<String>(); //Needs to use Collect.synchronizedlist
     public LinkedList <String> crawler_list_lvl2 = new LinkedList<String>(); // After Filtered by Bloom-filt
-    public static ConcurrentLinkedQueue <String> bag_of_taks = new ConcurrentLinkedQueue<String>();
+    public static ConcurrentLinkedQueue <String> bag_of_tasks = new ConcurrentLinkedQueue<String>();
     private static ArrayList <String> seed_list = new ArrayList<String>();
 
 
@@ -55,7 +55,7 @@ public class Main {
         }
 
         for (String link: seed_list) {
-            bag_of_taks.add(link);
+            bag_of_tasks.add(link);
         }
         //create_workers(num_of_workers,coffA,coffB);
         //ThreadPoolExecutor regulator = new ThreadPoolExecutor(1,num_of_workers,Long.MAX_VALUE, TimeUnit.NANOSECONDS,);
@@ -73,9 +73,9 @@ public class Main {
         boolean not_done = true;
         while(not_done){
             //pageCount++;
-            if (!bag_of_taks.isEmpty()){
-                regulator.submit(new Worker(coffA,coffB,bag_of_taks.poll()));
-            }else if(bag_of_taks.isEmpty() &&  ((ThreadPoolExecutor) regulator).getActiveCount()>0){
+            if (!bag_of_tasks.isEmpty()){
+                regulator.submit(new Worker(coffA,coffB,bag_of_tasks.poll()));
+            }else if(bag_of_tasks.isEmpty() &&  ((ThreadPoolExecutor) regulator).getActiveCount()>0){
                 Thread.sleep(10000);
                 //System.out.println("number of threads active:"+Thread.activeCount());
             }else{
@@ -85,7 +85,7 @@ public class Main {
         }
 
 
-        if(bag_of_taks.isEmpty()){System.out.print("You are out of work to do!!");}
+        if(bag_of_tasks.isEmpty()){System.out.print("You are out of work to do!!");}
 
         regulator.shutdown();
 
