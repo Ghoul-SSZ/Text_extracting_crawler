@@ -37,7 +37,7 @@ public class Main {
 
     //end of parameter section
 
-    public static void main (String[] args) {
+    public static void main (String[] args) throws InterruptedException {
         System.out.println("Hello Idiots");
         read_seed_list();
 
@@ -56,11 +56,18 @@ public class Main {
         //create_workers(num_of_workers,coffA,coffB);
         ExecutorService regulator = Executors.newFixedThreadPool(num_of_workers);
 
-        while(!bag_of_taks.isEmpty()){
+        boolean not_done = true;
+        while(not_done){
             //pageCount++;
-            regulator.execute(new Worker(coffA,coffB));
+            if (!bag_of_taks.isEmpty()){regulator.execute(new Worker(coffA,coffB));
+            }else if(bag_of_taks.isEmpty()){
+                Thread.sleep(1000);
+            }else{not_done=false;}
         }
+
         if(bag_of_taks.isEmpty()){System.out.print("You are out of work to do!!");}
+
+
 
 
 
