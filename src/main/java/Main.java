@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.Random;
 import java.util.concurrent.*;
 
+
 /**
  * Created by szhou on 3/29/17.
  */
@@ -24,11 +25,18 @@ import java.util.concurrent.*;
 **/
 public class Main {
 
-
     public LinkedList <String> crawler_list_lvl1 = new LinkedList<String>(); //Needs to use Collect.synchronizedlist
     public LinkedList <String> crawler_list_lvl2 = new LinkedList<String>(); // After Filtered by Bloom-filt
     public static ConcurrentLinkedQueue <String> bag_of_tasks = new ConcurrentLinkedQueue<String>();
     private static ArrayList <String> seed_list = new ArrayList<String>();
+    private static ArrayList<BitSet> MLBF = new ArrayList<BitSet>(); // keeps all BF in a list, layer is defined by the list cell position.
+
+
+    //parameter section
+    private static int L = 5;
+    private static int K = 20;
+    private static int num_of_workers = 5;
+    //end of parameter section
 
 
     //parameter section
@@ -45,8 +53,11 @@ public class Main {
         System.out.println("Hello Idiots");
         read_seed_list();
 
+
         ArrayList <Integer> coffA = genRCoff(K);
         ArrayList <Integer> coffB = genRCoff(K);
+        create_workers(num_of_workers);
+
         //Bit arrays for Bloom Filter
         //n = 1,000,000, p = 1.0E-6 (1 in 1,000,000) → m = 28,755,176 (3.43MB), k = 20
         for(int i = 0; i<=L; i++){
@@ -92,11 +103,6 @@ public class Main {
         long endTime   = System.currentTimeMillis();
         long totalTime = endTime - startTime;
         System.out.println("total time: "+ totalTime);
-
-
-
-
-
     }
 
    // private static void create_workers(int num_of_workers, ArrayList coffA, ArrayList coffB){
@@ -105,6 +111,7 @@ public class Main {
    //     }
 
    //    }
+
 
     //Convert the text file into an Arraylist for further processing
     private static void read_seed_list(){
@@ -116,7 +123,6 @@ public class Main {
             while((line = br.readLine()) != null){
                 seed_list.add(line);
             }
-            System.out.println(seed_list);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -141,7 +147,4 @@ public class Main {
         //System.out.println(coff);
         return coff;
     }
-
-
-
 }

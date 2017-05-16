@@ -63,6 +63,7 @@ public class Worker implements Runnable { //(added implements runnable)
 
         public void run(){
 
+
         // Declaration of variables
         long startTime=System.currentTimeMillis();
         int lineNumber=1;
@@ -188,6 +189,12 @@ public class Worker implements Runnable { //(added implements runnable)
             else count = input.split("\\s+").length;
             return count;
         }
+        String input = word.trim();
+        int count;
+        if (input.length()==0) count = 0;
+        else count = input.split("\\s+").length;
+        return count;
+    }
 
 }
 
