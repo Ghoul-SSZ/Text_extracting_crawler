@@ -52,15 +52,16 @@ https://www.wallstreetoasis.com/forums/anatomy-of-the-10-k
 public class Worker implements Runnable { //(added implements runnable)
     ArrayList <Integer> coffA;
     ArrayList <Integer> coffB;
+    String link;
     int pageCount;
-    public Worker( ArrayList<Integer> CoffA, ArrayList<Integer> CoffB){
+    public Worker( ArrayList<Integer> CoffA, ArrayList<Integer> CoffB, String link){
             this.coffA=CoffA;
             this.coffB=CoffB;
+            this.link=link;
             //this.pageCount=pageCount;
     }
 
         public void run(){
-        String link = Main.bag_of_taks.poll();
 
         // Declaration of variables
         long startTime=System.currentTimeMillis();

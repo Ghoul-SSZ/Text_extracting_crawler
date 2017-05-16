@@ -1,5 +1,7 @@
 
 
+import sun.management.snmp.jvminstr.JvmThreadInstanceEntryImpl;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -8,9 +10,7 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.Random;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  * Created by szhou on 3/29/17.
@@ -23,6 +23,8 @@ import java.util.concurrent.Executors;
 *Crawl List (lvl.2)
 **/
 public class Main {
+
+
     public LinkedList <String> crawler_list_lvl1 = new LinkedList<String>(); //Needs to use Collect.synchronizedlist
     public LinkedList <String> crawler_list_lvl2 = new LinkedList<String>(); // After Filtered by Bloom-filt
     public static ConcurrentLinkedQueue <String> bag_of_taks = new ConcurrentLinkedQueue<String>();
@@ -38,6 +40,8 @@ public class Main {
     //end of parameter section
 
     public static void main (String[] args) throws InterruptedException {
+        long startTime = System.currentTimeMillis();
+
         System.out.println("Hello Idiots");
         read_seed_list();
 
@@ -54,18 +58,40 @@ public class Main {
             bag_of_taks.add(link);
         }
         //create_workers(num_of_workers,coffA,coffB);
+        //ThreadPoolExecutor regulator = new ThreadPoolExecutor(1,num_of_workers,Long.MAX_VALUE, TimeUnit.NANOSECONDS,);
         ExecutorService regulator = Executors.newFixedThreadPool(num_of_workers);
+
+        /*
+        while (!bag_of_taks.isEmpty()){
+            System.out.println("worker created");
+            System.out.println("links remain: " + bag_of_taks.toString() );
+            regulator.submit(new Worker(coffA,coffB));
+
+        }
+        */
 
         boolean not_done = true;
         while(not_done){
             //pageCount++;
-            if (!bag_of_taks.isEmpty()){regulator.execute(new Worker(coffA,coffB));
-            }else if(bag_of_taks.isEmpty()){
-                Thread.sleep(1000);
-            }else{not_done=false;}
+            if (!bag_of_taks.isEmpty()){
+                regulator.submit(new Worker(coffA,coffB,bag_of_taks.poll()));
+            }else if(bag_of_taks.isEmpty() &&  ((ThreadPoolExecutor) regulator).getActiveCount()>0){
+                Thread.sleep(10000);
+                //System.out.println("number of threads active:"+Thread.activeCount());
+            }else{
+                not_done=false;
+                System.out.println("false");
+            }
         }
 
+
         if(bag_of_taks.isEmpty()){System.out.print("You are out of work to do!!");}
+
+        regulator.shutdown();
+
+        long endTime   = System.currentTimeMillis();
+        long totalTime = endTime - startTime;
+        System.out.println("total time: "+ totalTime);
 
 
 
