@@ -102,9 +102,7 @@ public class Worker implements Runnable { //(added implements runnable)
                 because they are not text content.*/
                 doc.select("div.signature, head, noscript, script, style, .hidden, php").remove();
 
-
                 // Create a multimap to store the cleaned lines later with the word count as key and a list of the lines as value
-                Multimap<Integer, String> wordCountedLines=HashMultimap.create();
 
                 // Parse the document as html and delete all the newlines and useless whitespaces
                 String sourceCode=doc.html();
@@ -134,12 +132,15 @@ public class Worker implements Runnable { //(added implements runnable)
                     }
 
                 }
+                //System.out.println("Algorithm 1");
 
                 /*End of Algorithm 1*/
                 /*Start of Algorithm 2 -- Smoothing*/
                 ArrayList <Double> H_CTTD_list_Smooth = new ArrayList<Double>();
                 for(int j=0; j<H_CTTD_list.size(); j++){
-                    if (j<1){
+                    if (j<=1){
+                        H_CTTD_list_Smooth.add(H_CTTD_list.get(j));
+                    }else if(j>H_CTTD_list.size()-3){
                         H_CTTD_list_Smooth.add(H_CTTD_list.get(j));
                     }else{
                         //CCTD_Smooth = 0.1(CTTD_j-2 + 2* CTTD_j-1 + 4*CTTD_j +2*CTTD_j+1 +CTTD_j+2)
@@ -147,6 +148,8 @@ public class Worker implements Runnable { //(added implements runnable)
                         H_CTTD_list_Smooth.add(CCTD_Smooth);
                     }
                 }
+                //System.out.println("Algorithm 2");
+
                 /*End of Algorithm 2*/
                 /*Start of Algorithm 3 -- Find candidates*/
 
@@ -159,43 +162,135 @@ public class Worker implements Runnable { //(added implements runnable)
                 }
                 double CTTD_theta= CTTD_min + 0.5*(CTTD_max - CTTD_min);
 
-                int Gap_theta = 3; // ask mike tomorrow
+                int Gap_theta = 10; // ask mike tomorrow
 
                 //TB?
                 ArrayList<Pair<Integer,Integer>> TBs = new ArrayList<Pair<Integer, Integer>>();
                 int k = 0; //used to count the number of candidates
                 int start=0;
-                int gap=0;
+                int gap;
                 int TC_i;
                 int TC_n=0;
 
                 for (int i =0; i<lines.length;i++){
+                    int end=0;
                     if (H_CTTD_list_Smooth.get(i)>CTTD_theta){
                          start = i;
                          gap = 0;
                          TC_i= countWord(lines[i]);
 
-                         for (int a =i+1; a<lines.length; a++){
-                             if (countTags(lines[i])==0){
+                         for (int a = start+1; a<lines.length; a++){
+                             if (countTags(lines[a]) == 0){
                                  continue;
-                             }else if (H_CTTD_list_Smooth.get(i)<=CTTD_theta && gap>=Gap_theta){
+                             }else if ((H_CTTD_list_Smooth.get(a) < CTTD_theta) && (gap>=Gap_theta)){
+                                 end=a;
                                  break;
-                             }else if (H_CTTD_list_Smooth.get(i)<=CTTD_theta){
+                             }else if ((H_CTTD_list_Smooth.get(a) < CTTD_theta)){
                                  gap++;
                              }
-                             TC_n += TC_i;
+                             TC_n =TC_n + TC_i;
+                             end=a;
+
+
                          }
                     }
 
-                    if (countWord(lines[i])<1){
-                        continue;
+
+                    if(end!=0){
+                        Pair TB = new Pair(start,end-1);
+                        //System.out.println("Start "+TB.x.toString());
+                        //System.out.println("End "+TB.y.toString());
+                        //System.out.println("Textbox: " + TBs.size());
+                        if (!TBs.contains(TB)) {
+                            TBs.add(TB);
+                            //System.out.println(TBs.toString());
+                        }
+                        k++;
                     }
 
-                    Pair TB = new Pair(start,i-1);
-                    TBs.add(TB);
+                    if (TC_n<1){continue;}
+
+
                 }
+                System.out.println("Number of TextBoxes: "+k);
+
+                //Constructing Text boxes
+                ArrayList<ArrayList<String>> cTB = new ArrayList<ArrayList<String>>();
+
+                for (Pair TB:TBs) {
+                    ArrayList<String> TB_lines = new ArrayList<String>();
+
+                    int TB_start = (Integer) TB.x;
+                    int TB_end = (Integer) TB.y;
+
+                    for (int s=TB_start; s <= TB_end;s++){
+                        //System.out.println("S here" + s);
+                        TB_lines.add(lines[s]);
+                        //System.out.println("TEXT: " + lines[s]);
+                    }
+                    cTB.add(TB_lines);
+                }
+                //System.out.println("TBs: " + cTB);
+                //System.out.println("Algorithm 3");
+
+                /*
+                for (ArrayList e:cTB) {
+                    System.out.println("CHECIKING..." + e.toString());
+                }*/
+
                 /*End of Algorithm 3*/
 
+                /*Algorithm 4: Text verification*/
+                ArrayList<ArrayList<String>> verified_textbox = new ArrayList<ArrayList<String>>();
+                int counter = 0;
+
+                for (int at=0; at< cTB.size(); at++){
+                //for (ArrayList t:cTB) {
+                    int Ll_number=0;
+                    int TC_threshold = 30;
+                    int Tv_wordcount= 0;
+                    int link_wordcount = 0;
+                    boolean copyrighted = false;
+                    //System.out.println(cTB.size());
+                    //System.out.println(counter++);
+                    for(int att=0; att<cTB.get(at).size(); att++){
+                    //for (Object e: cTB.get(at)) {
+                        Tv_wordcount = Tv_wordcount+countWord(cTB.get(at).get(att));
+                        link_wordcount= link_wordcount+countLinkWord(cTB.get(at).get(att));
+                        if (cTB.get(at).get(att).contains("</p>")){Ll_number++;}
+                        if (cTB.get(at).get(att).contains("</br>")){Ll_number++;}
+                        if (cTB.get(at).get(att).contains("copyright")){copyrighted=true;}
+                        if (cTB.get(at).get(att).contains("All Rights Reserved")){copyrighted=true;}
+
+                    }
+                    //System.out.println("WC: "+ Tv_wordcount);
+
+                    //rule 1
+                    if (Tv_wordcount>TC_threshold){
+                        //rule 2 link density should be < 0.5
+                        if ((link_wordcount/(link_wordcount+Tv_wordcount))<0.5){
+                            //rule 3
+                            if (Ll_number/cTB.get(at).size()<0.5){
+                                //rule 4  rewerite
+                                if (!copyrighted){
+                                    //System.out.println("Adddddddddddddd");
+                                    //System.out.println(cTB.get(at));
+                                    verified_textbox.add(cTB.get(at));
+                                }
+                            }
+                        }
+                    }
+
+
+
+
+
+                }
+                //System.out.println("4 done");
+                //System.out.println("vtb size: " + verified_textbox.size());
+
+
+                /*End of Algorithm 4*/
 
                 //System.out.println("This is the link I am visiting right now "+link);
                 String text = link.replaceAll("https://","");
@@ -203,6 +298,15 @@ public class Worker implements Runnable { //(added implements runnable)
                 text = text.replaceAll("/","*");
                 String ftext= text + ".txt";
                 FileWriter fw = new FileWriter(new File("collected_data", ftext));
+                for (ArrayList a:verified_textbox) {
+                    //System.out.println("***********************************************************************");
+                    String cline;
+                    for (Object s:a) {
+                        cline = s.toString().replaceAll("<.*?>","");
+                        fw.write(cline);
+                        fw.write("\n");
+                    }
+                }
 
 
                 fw.close();
@@ -220,7 +324,7 @@ public class Worker implements Runnable { //(added implements runnable)
                     if(!dlink.equals("")){
                     if (!BloomFilter.bloom_filter_query(dlink,coffA,coffB)){
                         BloomFilter.bloom_filter_insert(dlink,coffA,coffB);
-                        //System.out.println("new links:"+dlink);
+                        System.out.println("new links:"+dlink);
                         Main.bag_of_tasks.add(dlink);
                     }
                     }
