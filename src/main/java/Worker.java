@@ -47,7 +47,6 @@ public class Worker implements Runnable {
     int lineCounter = 0;
     int contentThreshold = 7;
     int radius = 25;
-
     public Worker( ArrayList<Integer> CoffA, ArrayList<Integer> CoffB, String link){
             this.coffA=CoffA;
             this.coffB=CoffB;
@@ -184,8 +183,13 @@ public class Worker implements Runnable {
             }catch (IOException err){err.printStackTrace();}
         }
 
+        /*!
+        * @param word string of words to be processed
+        * @return the number of words to be returned
+          @warning dont be stupid mike!!
+         */
         // Word counter function
-        private static int countWord(String word) {
+        public static int countWord(String word) {
             if (word == null) {
                 return 0;
             }
@@ -198,7 +202,7 @@ public class Worker implements Runnable {
 
 
         //Pair class for Ratio & Content pair, for each line
-        private class Ratio_Content_Pair{
+        public class Ratio_Content_Pair{
 
             public double ratio;
             public String content;

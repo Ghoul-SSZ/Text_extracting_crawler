@@ -47,7 +47,7 @@ public class Main {
         ArrayList <Integer> coffB = genRCoff(K);
 
         //Bit arrays for Bloom Filter
-        //n = 1,000,000, p = 1.0E-6 (1 in 1,000,000) → m = 28,755,176 (3.43MB), k = 20
+        //n = 1,000,000, p = 1.0E-6 (1 in 1,000,000) -> m = 28,755,176 (3.43MB), k = 20
         for(int i = 0; i<=L; i++){
             BitSet BFs = new BitSet(28755176);
             BloomFilter.MLBF.add(BFs);
