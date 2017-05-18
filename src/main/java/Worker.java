@@ -16,10 +16,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import org.jsoup.select.Elements;
-
 /*
 * Modules
 * - Link extraction
@@ -37,10 +33,6 @@ import org.jsoup.select.Elements;
 *
 *
 *
-* https://www.elitetrader.com/et/threads/tesla-to-raise-1-15-billion-ahead-of-its-model-3-launch.307736
-http://www.money-talk.org/thread29673.html&sid=7e96861e745de2f19a2a23947695ea27
-http://www.marketthoughts.com/forum/best-buy-bby-t2357.html
-https://www.wallstreetoasis.com/forums/anatomy-of-the-10-k
 *
 *
 *
@@ -48,13 +40,14 @@ https://www.wallstreetoasis.com/forums/anatomy-of-the-10-k
 *
 * */
 
-//testing
-
-public class Worker implements Runnable { //(added implements runnable)
+public class Worker implements Runnable {
     ArrayList <Integer> coffA;
     ArrayList <Integer> coffB;
     String link;
-    
+    int lineCounter = 0;
+    int contentThreshold = 7;
+    int radius = 25;
+
     public Worker( ArrayList<Integer> CoffA, ArrayList<Integer> CoffB, String link){
             this.coffA=CoffA;
             this.coffB=CoffB;
@@ -70,7 +63,6 @@ public class Worker implements Runnable { //(added implements runnable)
 
             // Get the url and parse it into a jsoup document
             try{
-                System.out.println("this is my link"+ link);
                 URL aURL = new URL(link.toString());
                 Document doc = Jsoup.connect(link).get();
                 String domain = aURL.getHost();
@@ -104,7 +96,6 @@ public class Worker implements Runnable { //(added implements runnable)
                 // Save the cleaned lines into a multimap by word count
                 int lineNumber=0;
                 double totalTTRatio=0;
-                int radius = 35;
                 for(String line:lines){
 
                     int lineTagCounter = 0;
@@ -143,34 +134,40 @@ public class Worker implements Runnable { //(added implements runnable)
 
                 // For each loops to go through each line. After getting the line get the TTR of each line and if it
                 // above the threshold, get the value for that line (the content) and print it out with its TTR.
-                System.out.println("Lines above the threshold " + totalTTRatio/(2*radius+1) + "are: ");
-               for (Map.Entry<Integer, Ratio_Content_Pair> entry : wordCountedLines.entrySet()) {
-                    Ratio_Content_Pair innerPair = entry.getValue();
-                    if (innerPair.ratio > totalTTRatio/(2*radius+1)){
-                        System.out.println("Ratio: " + innerPair.ratio + " Content: " + innerPair.content);
-                    }
-                }
-
-                //System.out.println("This is the link I am visiting right now "+link);
-                String text = link.replaceAll("https://","");
-                text = link.replaceAll("http://","");
-                text = text.replaceAll("/","*");
-                String ftext= text + ".txt";
-                FileWriter fw = new FileWriter(new File("collected_data", ftext));
+                System.out.println("Threshold " + totalTTRatio/(2*radius+1));
                 for (Map.Entry<Integer, Ratio_Content_Pair> entry : wordCountedLines.entrySet()) {
                     Ratio_Content_Pair innerPair = entry.getValue();
                     if (innerPair.ratio > totalTTRatio/(2*radius+1)){
-                        fw.write(innerPair.content);
-                        fw.write(System.getProperty( "line.separator" ));
+                        lineCounter++;
                     }
                 }
-                fw.close();
 
+                System.out.println("This is the link I am visiting right now "+link);
+                if(lineCounter>contentThreshold){
+
+                    String text = link.replaceAll("https://", "");
+                    text = link.replaceAll("http://", "");
+                    text = text.replaceAll("/", "*");
+                    String ftext = text + ".txt";
+                    FileWriter fw = new FileWriter(new File("collected_data", ftext));
+                    for (Map.Entry<Integer, Ratio_Content_Pair> entry : wordCountedLines.entrySet()) {
+                        Ratio_Content_Pair innerPair = entry.getValue();
+                        if (innerPair.ratio > totalTTRatio / (2 * radius + 1)) {
+                            fw.write(innerPair.content);
+                            fw.write(System.getProperty("line.separator"));
+                        }
+                    }
+                    fw.close();
+
+                }else{
+                    System.out.println("Not a thread page: " + link);
+                }
 
                 // Print the elapsed time for the program to run
                 long stopTime=System.currentTimeMillis();
                 long elapsedTime=stopTime-startTime;
                 System.out.println("Time in milliseconds is: "+elapsedTime);
+                System.out.println("---------------------------------------------------------------------------");
 
                 // Get arraylist of link, put links to MLBF
                 // Result: filtered list
