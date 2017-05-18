@@ -7,12 +7,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.FileWriter;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Calendar;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -111,7 +109,40 @@ public class Worker implements Runnable { //(added implements runnable)
                 // Take each line of the HTML document and delete all the html tags to clean up the lines
 
                 ArrayList<Double> H_CTTD_list = new ArrayList<Double>();
+                ArrayList<String> TimeStamps = new ArrayList<String>();
                 for(String line:lines){
+                    //Extract time stamp
+                    Pattern p1 = Pattern.compile("(\\w{3}\\s\\d{2}.\\s\\d{4})");
+                    Pattern p2 = Pattern.compile("(\\w{3}\\s\\d{2}\\s\\d{4})");
+
+                    Pattern p3 = Pattern.compile("(\\w{3}\\s\\d{1}.\\s\\d{4})");
+                    Pattern p4 = Pattern.compile("(\\w{3}\\s\\d{1}\\s\\d{4})");
+
+
+                    //you could also use "d\\^(.*)Z" as your regex patern
+                    Matcher m1 = p1.matcher(line);
+                    Matcher m2 = p2.matcher(line);
+                    Matcher m3 = p3.matcher(line);
+                    Matcher m4 = p4.matcher(line);
+
+                    if (m1.find() ) {
+                        //System.out.println(m1.group(1)); //print out the timestamp
+                        TimeStamps.add(m1.group(1));
+                    }
+
+                    if (m2.find()){
+                        TimeStamps.add(m2.group(1));
+                    }
+
+                    if (m3.find()){
+                        TimeStamps.add(m3.group(1));
+                    }
+
+                    if (m4.find()){
+                        TimeStamps.add(m4.group(1));
+                    }
+
+
                     //Count Word
                     int TC = countWord(line);
                     //Count Link Word
@@ -132,7 +163,34 @@ public class Worker implements Runnable { //(added implements runnable)
                     }
 
                 }
-                //System.out.println("Algorithm 1");
+
+                //Filter the time stamps
+                Calendar min_date = Calendar.getInstance();
+                Calendar max_date = Calendar.getInstance();
+                max_date.set(1000,1,1);
+
+
+                for (String e:TimeStamps) {
+                    String[] month_date_year = e.split(" ");
+                    String month = month_date_year[0];
+                    String date = month_date_year[1].replace(",","");
+                    Calendar temp_date = Calendar.getInstance();
+
+                    int month_int = getMonth(month);
+                    int date_int =  Integer.parseInt(date);
+                    int year_int = Integer.parseInt(month_date_year[2]);
+
+                    temp_date.set(year_int,month_int,date_int);
+
+                    if (temp_date.before(min_date)){
+                        min_date = temp_date;
+                    }
+
+                    if (temp_date.after(max_date)){
+                        max_date = temp_date;
+                    }
+
+                }
 
                 /*End of Algorithm 1*/
                 /*Start of Algorithm 2 -- Smoothing*/
@@ -297,7 +355,19 @@ public class Worker implements Runnable { //(added implements runnable)
                 text = text.replaceAll("http://","");
                 text = text.replaceAll("/","*");
                 String ftext= text + ".txt";
+                if (!TimeStamps.isEmpty() || verified_textbox.size()>= 2 ){
                 FileWriter fw = new FileWriter(new File("collected_data", ftext));
+
+                /*for (String tStamp: TimeStamps) {
+                    fw.write(tStamp);
+                    fw.write("\n");
+                }*/
+
+                fw.write(max_date.getTime().toString());
+                fw.write("\n");
+                fw.write(min_date.getTime().toString());
+                fw.write("\n");
+
                 for (ArrayList a:verified_textbox) {
                     //System.out.println("***********************************************************************");
                     String cline;
@@ -309,7 +379,7 @@ public class Worker implements Runnable { //(added implements runnable)
                 }
 
 
-                fw.close();
+                fw.close();}
 
             // Print the elapsed time for the program to run
                 long stopTime=System.currentTimeMillis();
@@ -385,6 +455,41 @@ public class Worker implements Runnable { //(added implements runnable)
 
             while (matcher.find()){pCount++;}
             return pCount;
+        }
+
+        private static int getMonth (String input ){
+            String month = input.toUpperCase();
+            int month_int;
+            switch (month) {
+                case "JAN":  month_int = 1;
+                    break;
+                case "FEB":  month_int = 2;
+                    break;
+                case "MAR":  month_int = 3;
+                    break;
+                case "APR":  month_int = 4;
+                    break;
+                case "MAY":  month_int = 5;
+                    break;
+                case "JUN":  month_int = 6;
+                    break;
+                case "JUL":  month_int = 7;
+                    break;
+                case "AUG":  month_int = 8;
+                    break;
+                case "SEP":  month_int = 9;
+                    break;
+                case "OCT": month_int = 10;
+                    break;
+                case "NOV": month_int = 11;
+                    break;
+                case "DEC": month_int = 12;
+                    break;
+                default: month_int = 0;
+                    break;
+            }
+
+            return month_int;
         }
 
 
