@@ -1,3 +1,6 @@
+package com.scraper.app;
+
+
 import java.util.ArrayList;
 import java.util.BitSet;
 

@@ -1,3 +1,6 @@
+package com.scraper.app;
+
+
 /**
  * Created by szhou on 3/29/17.
  */
@@ -7,17 +10,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.FileWriter;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import org.jsoup.select.Elements;
 
 /*
 * Modules
@@ -100,7 +99,7 @@ public class Worker implements Runnable { //(added implements runnable)
                 //doc.select("div.signature").remove();
 
                 // Create a multimap to store the cleaned lines later with the word count as key and a list of the lines as value
-                Multimap<Integer, String> wordCountedLines=HashMultimap.create();
+                HashMap<Integer, String> wordCountedLines = new HashMap<Integer, String>();
 
                 // Parse the document as html and delete all the newlines and useless whitespaces
                 String sourceCode=doc.html();
@@ -130,30 +129,26 @@ public class Worker implements Runnable { //(added implements runnable)
                 System.out.println(averageWords);
 
                 // Use the average word count to retrieve the lines with greater or equal word count from the multimap
-                int numOfLines=0;
-                for(int getWords=averageWords;getWords<=maxWordCount;getWords++){
-                    if(!wordCountedLines.get(getWords).isEmpty()){
-                        //System.out.println(wordCountedLines.get(getWords));
-                        numOfLines++;
-                    }
-                }
 
-                //System.out.println("This is the link I am visiting right now "+link);
+
+                int numOfLines=0;
                 String text = link.replaceAll("https://","");
                 text = link.replaceAll("http://","");
                 text = text.replaceAll("/","*");
                 String ftext= text + ".txt";
                 FileWriter fw = new FileWriter(new File("collected_data", ftext));
-                for(int getWords=averageWords;getWords<=maxWordCount;getWords++) {
-                    Collection<String> myCollection = wordCountedLines.get(getWords);
-                    if (!wordCountedLines.get(getWords).isEmpty()) {
-                        if(myCollection.iterator().hasNext()) {
-                            fw.write(myCollection.toString());
-                            fw.write("\n");
-                        }
+                Set<Map.Entry<Integer, String>> entrySet = wordCountedLines.entrySet();
+                for (Map.Entry<Integer, String> entry : entrySet) {
+                    String lineText = entry.getValue();
+                    if(!text.equals(null)){
+                        numOfLines++;
+                        fw.write(lineText.toString());
+                        fw.write("\n");
                     }
                 }
+
                 fw.close();
+
 
             // Print the elapsed time for the program to run
                 long stopTime=System.currentTimeMillis();
