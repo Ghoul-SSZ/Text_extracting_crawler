@@ -1,7 +1,3 @@
-/**
- * Created by szhou on 3/29/17.
- */
-
 
 import java.io.File;
 import java.io.IOException;
@@ -16,29 +12,26 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-/*
-* Modules
-* - Link extraction
-* - Text extraction
-* - Signal to Regulator
-*
-* Arguments
-* - URL (From either Regulator or Main)
-*
-* Outputs
-* - Text Data
-* - Href links to Crawl List (lvl.1)
-*   - Ignore picture, PDFs, and link outside the forum
-* - Idle_signal
-*
-*
-*
-*
-*
-*
-*
-*
-* */
+/**
+ *
+ *
+ *
+ * The Worker class implements an application that
+ * fetches web-links from a queue to crawl through
+ * while extracting text.
+ *
+ * It uses the JSOUP Framework for the basic crawling,
+ * as well as for the DOM manipulation of the HTML.
+ *
+ * @author Steven Shidi Zhou
+ * @author Michael Palma Alegria
+ *
+ * @version 1.0
+ * @since 2017-05-15
+ *
+ *
+ */
+
 
 public class Worker implements Runnable {
     ArrayList <Integer> coffA;
@@ -47,6 +40,7 @@ public class Worker implements Runnable {
     int lineCounter = 0;
     int contentThreshold = 7;
     int radius = 25;
+
     public Worker( ArrayList<Integer> CoffA, ArrayList<Integer> CoffB, String link){
             this.coffA=CoffA;
             this.coffB=CoffB;
@@ -184,11 +178,14 @@ public class Worker implements Runnable {
         }
 
         /*!
-        * @param word string of words to be processed
-        * @return the number of words to be returned
-          @warning dont be stupid mike!!
-         */
-        // Word counter function
+        *
+        * This method is used to count the words in a string
+        *  or line of a document.
+        *
+        * @param word A string of words to be processed
+        * @return The number of words in the processed string
+        * @warning S.M Don't be "Stupid Mike"!!
+        */
         public static int countWord(String word) {
             if (word == null) {
                 return 0;
