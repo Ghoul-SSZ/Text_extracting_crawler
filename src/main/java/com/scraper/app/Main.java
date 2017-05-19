@@ -72,13 +72,19 @@ public class Main {
 
         boolean not_done = true;
         while(not_done){
+            long tempTime  = System.currentTimeMillis();
+
             //pageCount++;
-            if (!bag_of_tasks.isEmpty()){
+            if ((tempTime-startTime)>30000){
+                System.out.println("time is up: 5 mins");
+                System.exit(0);
+                regulator.shutdown();
+            }else if (!bag_of_tasks.isEmpty()){
                 regulator.submit(new Worker(coffA,coffB,bag_of_tasks.poll()));
-            }else if(bag_of_tasks.isEmpty() &&  ((ThreadPoolExecutor) regulator).getActiveCount()>0){
-                Thread.sleep(10000);
+            }else if(bag_of_tasks.isEmpty() &&  ((ThreadPoolExecutor) regulator).getActiveCount()>2){
+                Thread.sleep(1000);
                 //System.out.println("number of threads active:"+Thread.activeCount());
-            }else{
+            } else{
                 not_done=false;
                 System.out.println("false");
             }
