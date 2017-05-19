@@ -1,3 +1,5 @@
+package com.scraper.app;
+
 /**
  * Created by szhou on 3/29/17.
  */
@@ -15,10 +17,6 @@ import java.util.Calendar;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import org.jsoup.select.Elements;
 
 /*

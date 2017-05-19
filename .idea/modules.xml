@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Text_extracting_crawler.iml" filepath="$PROJECT_DIR$/Text_extracting_crawler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/scraper-thesis.iml" filepath="$PROJECT_DIR$/scraper-thesis.iml" />
     </modules>
   </component>
 </project>

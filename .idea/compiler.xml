@@ -6,10 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="scraper-thesis" />
         <module name="Text_extracting_crawler" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="scraper-thesis" target="1.8" />
       <module name="Text_extracting_crawler" target="1.8" />
     </bytecodeTargetLevel>
   </component>
