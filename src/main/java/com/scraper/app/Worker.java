@@ -1,3 +1,4 @@
+package com.scraper.app;
 
 import java.io.File;
 import java.io.IOException;
