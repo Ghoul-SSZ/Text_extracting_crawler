@@ -271,6 +271,26 @@ public class Worker implements Runnable { //(added implements runnable)
                 }
                 System.out.println("Number of TextBoxes: "+k);
 
+                // deleting overlap
+
+                for (int i=0; i<TBs.size()-1; i++){
+                    int end1 = TBs.get(i).y;
+                    int end2 = TBs.get(i+1).y;
+                    if (end1==end2){
+                        TBs.remove(i+1);
+                        i--;
+                    }
+                }
+
+                /*for (Pair s:TBs) {
+                    System.out.println(s.x);
+                    System.out.println(s.y);
+                }*/
+
+
+
+                // end of deleting overlap
+
                 //Constructing Text boxes
                 ArrayList<ArrayList<String>> cTB = new ArrayList<ArrayList<String>>();
 
