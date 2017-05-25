@@ -254,10 +254,11 @@ public class Worker implements Runnable { //(added implements runnable)
 
                     if(end!=0){
                         Pair TB = new Pair(start,end-1);
-                        //System.out.println("Start "+TB.x.toString());
-                        //System.out.println("End "+TB.y.toString());
-                        //System.out.println("Textbox: " + TBs.size());
+                        System.out.println("Start "+TB.x.toString());
+                        System.out.println("End "+TB.y.toString());
+                        System.out.println("Textbox: " + TBs.size());
                         if (!TBs.contains(TB)) {
+
                             TBs.add(TB);
                             //System.out.println(TBs.toString());
                         }
