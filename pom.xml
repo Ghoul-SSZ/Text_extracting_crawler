@@ -23,7 +23,6 @@
             </plugin>
         </plugins>
     </build>
-    <modelVersion>4.0.0</modelVersion>
     <groupId>com.scraper.app</groupId>
     <artifactId>scraper-thesis</artifactId>
     <packaging>jar</packaging>

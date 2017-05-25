@@ -75,7 +75,7 @@ public class Main {
             long tempTime  = System.currentTimeMillis();
 
             //pageCount++;
-            if ((tempTime-startTime)>30000){
+            if ((tempTime-startTime)>300000){
                 System.out.println("time is up: 5 mins");
                 System.exit(0);
                 regulator.shutdown();
